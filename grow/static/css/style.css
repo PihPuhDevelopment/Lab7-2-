@@ -22,8 +22,10 @@ body{
 }
 
 .menu-button{
-    display: block;
-    color: #000000; 
+    padding-left: 0px;
+    padding-right: 0px;
+    display: flex;
+    color: #000000;
 }
 
 .menu-button p{
