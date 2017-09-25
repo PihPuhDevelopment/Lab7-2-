@@ -14,7 +14,9 @@
     <form method="POST">
         {% csrf_token %}
         <div class="content">
-            {{form.as_p}}
+            <table align="center">
+                {{form.as_table}}
+            </table>
             <button action="submit" class="btn btn-primary">Зарегистрироваться</button>
         </div>
 
