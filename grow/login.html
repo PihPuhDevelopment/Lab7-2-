@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="article-body">
+
+    <form method="POST">
+        <div class="content">
+            <table align="center">
+                <tr>
+                <td>
+                    <label>
+                        Имя пользователя (или эл. почта):
+                    </label>
+                </td>
+                <td>
+                    <input type="text" name="username_or_email">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        Пароль:
+                    </label>
+                </td>
+                <td>
+                    <input type="text" name="password">
+                </td>
+            </tr>
+            </table>
+            <button action="submit" class="btn btn-primary">Войти</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
