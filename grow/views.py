@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext, loader
 from .models import Article
 from django.contrib.auth.models import User
+import forms
 
 # Create your views here..
 
@@ -25,60 +26,40 @@ def register(request):
     errors = []
     formdata = {}
     if request.method == 'POST':
-        username = request.POST.get('username')
-        if not username:
-            errors.append("Введите имя пользователя")
-        elif len(username) < 5:
-            errors.append("Имя пользователя должно содержать не менее 5 символов")
+        form = forms.RegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.username
+            email = form.email
+            firstname = form.firstname
+            lastname = form.lastname
+            password = form.password
+            confirmpass = form.confirmpass
 
-        email = request.POST.get('email')
-        if not email:
-            errors.append("Введите адрес эл. почты")
-
-        firstname = request.POST.get('firstname')
-        if not firstname:
-            errors.append("Введите своё имя")
-        else:
             formdata['firstname'] = firstname
-
-        lastname = request.POST.get('lastname')
-        if not lastname:
-            errors.append("Введите своё фамилию")
-        else:
             formdata['lastname'] = lastname
-
-        password = request.POST.get('password')
-        if not password:
-            errors.append("Введите пароль")
-        elif len(password) < 8:
-            errors.append("Пароль должен содержать не менее 8 символов")
-        else:
-            confirmpass = request.POST.get('confirmpass')
-            if not confirmpass:
-                errors.append("Подтвердите пароль")
-            elif password != confirmpass:
-                errors.append("Пароли не совпадают")
-                formdata['confirmpass'] = confirmpass
             formdata['password'] = password
 
-        sameusers = []
-        try:
-            sameusers.append(User.objects.get(username=username))
-        except User.DoesNotExist:
-            formdata['username'] = username
-        try:
-            sameusers.append(User.objects.get(email=email))
-        except User.DoesNotExist:
-            formdata['email'] = email
+            if password != confirmpass:
+                errors.append("Пароли не совпадают")
 
-        if sameusers:
-            errors.append("Пользователь с таким именем или адресом эл. почты уже существует")
+            sameusers = []
+            try:
+                sameusers.append(User.objects.get(username=username))
+            except User.DoesNotExist:
+                formdata['username'] = username
+            try:
+                sameusers.append(User.objects.get(email=email))
+            except User.DoesNotExist:
+                formdata['email'] = email
 
-        if errors:
-            return render(request, 'register.html', {'errors': errors, 'formdata': formdata})
+            if sameusers:
+                errors.append("Пользователь с таким именем или адресом эл. почты уже существует")
 
-        User.objects.create_user(username=username, email=email, password=password)
-        return HttpResponseRedirect("/login/")
+            if errors:
+                return render(request, 'register.html', {'errors': errors, 'formdata': formdata})
+
+            User.objects.create_user(username=username, email=email, password=password)
+            return HttpResponseRedirect("/login/")
 
     return render(request, 'register.html', {'errors': [], 'formdata': formdata})
 
